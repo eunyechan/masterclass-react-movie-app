@@ -9,6 +9,7 @@ import { useHistory, useRouteMatch } from "react-router-dom";
 const Wrapper = styled.div`
   background: black;
   padding-bottom: 200px;
+  overflow-x: hidden;
 `;
 
 const Loader = styled.div`
@@ -42,6 +43,14 @@ const Overview = styled.p`
 const Slider = styled.div`
   position: relative;
   top: -100px;
+  &:hover {
+    button {
+      opacity: 1;
+      transition: 0.5s ease;
+      background-color: rgba(0, 0, 0, 0.6);
+      border: none;
+    }
+  }
 `;
 
 const Row = styled(motion.div)`
@@ -50,7 +59,6 @@ const Row = styled(motion.div)`
   grid-template-columns: repeat(6, 1fr);
   position: absolute;
   width: 100%;
-  overflow: hidden;
 `;
 
 const Box = styled(motion.div)<{ bgPhoto: string }>`
@@ -108,6 +116,8 @@ const BigCover = styled.div`
   background-size: cover;
   background-position: center center;
   height: 400px;
+  overflow: visible;
+  display: flex;
 `;
 
 const BigTitle = styled.h3`
@@ -125,16 +135,40 @@ const BigOverview = styled.p`
   color: ${(props) => props.theme.white.lighter};
 `;
 
+const SliderLeftBtn = styled(motion.button)`
+  background-color: transparent;
+  height: 12.5rem;
+  width: 5rem;
+  position: absolute;
+  left: 0;
+  color: white;
+  font-size: 30px;
+  font-weight: bold;
+  opacity: 0;
+`;
+
+const SliderRightBtn = styled(motion.button)`
+  background-color: transparent;
+  position: absolute;
+  height: 12.5rem;
+  width: 5rem;
+  right: 0;
+  color: white;
+  font-size: 30px;
+  font-weight: bold;
+  opacity: 0;
+`;
+
 const rowVariants = {
-  hidden: {
-    x: window.outerWidth + 5,
-  },
+  hidden: (back: boolean) => ({
+    x: back ? -window.outerWidth + 5 : window.outerWidth - 5,
+  }),
   visible: {
     x: 0,
   },
-  exit: {
-    x: -window.outerWidth - 5,
-  },
+  exit: (back: boolean) => ({
+    x: back ? window.outerWidth - 5 : -window.outerWidth + 5,
+  }),
 };
 
 const boxVariants = {
@@ -175,7 +209,21 @@ function Home() {
   );
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
-  const incraseIndex = () => {
+  const [back, setBack] = useState(false);
+
+  const incraseLeftIndex = () => {
+    setBack(false);
+    if (data) {
+      if (leaving) return;
+      toggleLeaving();
+      const totalMovies = data.results.length - 1;
+      const maxIndex = Math.floor(totalMovies / offset) - 1;
+      setIndex((prev) => (prev === 0 ? maxIndex : prev - 1));
+    }
+  };
+
+  const incraseRightIndex = () => {
+    setBack(true);
     if (data) {
       if (leaving) return;
       toggleLeaving();
@@ -184,7 +232,9 @@ function Home() {
       setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
     }
   };
+
   const toggleLeaving = () => setLeaving((prev) => !prev);
+
   const onBoxClicked = (movieId: number) => {
     history.push(`/movies/${movieId}`);
   };
@@ -198,16 +248,18 @@ function Home() {
         <Loader>Loading...</Loader>
       ) : (
         <>
-          <Banner
-            onClick={incraseIndex}
-            bgPhoto={makeImagePath(data?.results[0].backdrop_path || "")}
-          >
+          <Banner bgPhoto={makeImagePath(data?.results[0].backdrop_path || "")}>
             <Title>{data?.results[0].title}</Title>
             <Overview>{data?.results[0].overview}</Overview>
           </Banner>
           <Slider>
-            <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
+            <AnimatePresence
+              custom={back}
+              initial={false}
+              onExitComplete={toggleLeaving}
+            >
               <Row
+                custom={back}
                 variants={rowVariants}
                 initial="hidden"
                 animate="visible"
@@ -219,22 +271,26 @@ function Home() {
                   .slice(1)
                   .slice(offset * index, offset * index + offset)
                   .map((movie) => (
-                    <Box
-                      layoutId={movie.id + ""}
-                      key={movie.id}
-                      whileHover="hover"
-                      initial="normal"
-                      variants={boxVariants}
-                      onClick={() => onBoxClicked(movie.id)}
-                      transition={{ type: "tween" }}
-                      bgPhoto={makeImagePath(movie.backdrop_path, "w500")}
-                    >
-                      <Info variants={infoVariants}>
-                        <h4>{movie.title}</h4>
-                      </Info>
-                    </Box>
+                    <>
+                      <Box
+                        layoutId={movie.id + ""}
+                        key={movie.id}
+                        whileHover="hover"
+                        initial="normal"
+                        variants={boxVariants}
+                        onClick={() => onBoxClicked(movie.id)}
+                        transition={{ type: "tween" }}
+                        bgPhoto={makeImagePath(movie.backdrop_path, "w500")}
+                      >
+                        <Info variants={infoVariants}>
+                          <h4>{movie.title}</h4>
+                        </Info>
+                      </Box>
+                    </>
                   ))}
               </Row>
+              <SliderLeftBtn onClick={incraseLeftIndex}>&lt;</SliderLeftBtn>
+              <SliderRightBtn onClick={incraseRightIndex}>&gt;</SliderRightBtn>
             </AnimatePresence>
           </Slider>
           <AnimatePresence>
