@@ -107,7 +107,7 @@ const BigMovie = styled(motion.div)`
   right: 0;
   margin: 0 auto;
   border-radius: 15px;
-  overflow: hidden;
+  overflow-y: scroll;
   background-color: ${(props) => props.theme.black.lighter};
 `;
 
@@ -317,6 +317,8 @@ function Home() {
                       />
                       <BigTitle>{clickedMovie.title}</BigTitle>
                       <BigOverview>{clickedMovie.overview}</BigOverview>
+                      {/* <MovieDetail /> */}
+                      <BigOverview>{clickedMovie.release_date}</BigOverview>
                     </>
                   )}
                 </BigMovie>
