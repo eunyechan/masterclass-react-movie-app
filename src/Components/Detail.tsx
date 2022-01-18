@@ -14,25 +14,21 @@ interface RouteParams {
 }
 
 const MovieDetail = () => {
-  const { movieId, tvId } = useParams() as RouteParams;
+  // const { movieId, tvId } = useParams() as RouteParams;
 
-  const { data, isLoading } = useQuery<IGetMovieDetail>(
-    ["movieDetail"],
-    () => (movieId ? getMovieDetail(movieId) : getTvDetail(tvId)),
-    { keepPreviousData: true }
-  );
+  // const { data, isLoading } = useQuery<IGetMovieDetail>(
+  //   ["movieDetail"],
+  //   () => (movieId ? getMovieDetail(movieId) : getTvDetail(tvId)),
+  //   { keepPreviousData: true }
+  // );
 
-  const time = data?.runtime;
-  const hour = time && Math.floor(time / 60);
-  const minutes = time && time % 60;
+  // const time = data?.runtime;
+  // const hour = time && Math.floor(time / 60);
+  // const minutes = time && time % 60;
 
   return (
     <>
-      <Container>
-        <title>{data?.name}</title>
-        {console.log(data?.name)}
-        {console.log(movieId)})
-      </Container>
+      <h2>sdf</h2>
     </>
   );
 };
