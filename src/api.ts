@@ -65,7 +65,7 @@ interface IGenres {
 }
 
 export function allTrending() {
-  return fetch(`${BASE_PATH}/trending/all/week?api_key=${API_KEY}`).then(
+  return fetch(`${BASE_PATH}/movie/popular?api_key=${API_KEY}`).then(
     (response) => response.json()
   );
 }

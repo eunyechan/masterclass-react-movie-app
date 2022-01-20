@@ -290,6 +290,7 @@ function Tv() {
       const maxIndex = Math.floor(totalTv / offset) - 1;
       setTodayTvIndex((prev) => (prev === 0 ? maxIndex : prev - 1));
     }
+    console.log(back);
   };
 
   const incraseTodayRightIndex = () => {
@@ -301,6 +302,7 @@ function Tv() {
       const maxIndex = Math.floor(totalTv / offset) - 1;
       setTodayTvIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
     }
+    console.log(back);
   };
 
   // PopTv Btn
