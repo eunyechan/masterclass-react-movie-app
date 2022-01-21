@@ -1,10 +1,17 @@
 import { useQuery } from "react-query";
 import styled from "styled-components";
 import { motion, AnimatePresence, useViewportScroll } from "framer-motion";
-import { getPopularTv, getTopRatedTv, getTv, IGetTv } from "../api";
+import {
+  // allTrending,
+  getTv,
+  IGetTv,
+  getTopRatedTv,
+  getPopularTv,
+} from "../api";
 import { makeImagePath } from "../utils";
 import { useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
+import Detail from "../Components/Detail";
 import noPoster from "../assets/noPoster.jpg";
 
 const Wrapper = styled.div`
@@ -20,14 +27,14 @@ const Loader = styled.div`
   align-items: center;
 `;
 
-const Banner = styled.div<{ bgPhoto: string }>`
+const Banner = styled.div<{ bgphoto: string }>`
   height: 90vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   padding: 60px;
   background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1)),
-    url(${(props) => props.bgPhoto});
+    url(${(props) => props.bgphoto});
   background-size: cover;
 `;
 
@@ -48,14 +55,9 @@ const SliderContainer = styled.div`
   font-weight: bolder;
 `;
 
-const SliderInlineBox = styled.div`
-  position: relative;
-  margin-top: 30px;
-  margin-bottom: 160px;
-`;
-
 const Slider = styled.div`
   position: relative;
+  margin-bottom: 13rem;
   &:hover {
     button {
       opacity: 1;
@@ -66,7 +68,7 @@ const Slider = styled.div`
   }
 `;
 
-const PopSlider = styled.div`
+const TvSlider = styled.div`
   position: relative;
   &:hover {
     button {
@@ -98,8 +100,8 @@ const Row = styled(motion.div)`
   width: 100%;
 `;
 
-const Box = styled(motion.div)<{ bgPhoto: string }>`
-  background-image: url(${(props) => props.bgPhoto});
+const Box = styled(motion.div)<{ bgphoto: string }>`
+  background-image: url(${(props) => props.bgphoto});
   background-size: cover;
   background-position: center center;
   height: 200px;
@@ -164,19 +166,17 @@ const BigTitle = styled.h3`
   top: -80px;
 `;
 
-const TodayTvTitle = styled.h3`
-  /* color: ${(props) => props.theme.white.lighter}; */
+const AllTrendingTv = styled.h3`
+  color: ${(props) => props.theme.white.lighter};
   font-size: 18px;
   display: flex;
   justify-content: center;
   align-items: center;
   background: transparent;
-  color: ${(props) => props.theme.white.lighter};
-
   margin-bottom: 20px;
 `;
 
-const PopTvTitle = styled.h3`
+const TvTitle = styled.h3`
   font-size: 18px;
   display: flex;
   justify-content: center;
@@ -258,76 +258,78 @@ const infoVariants = {
 
 const offset = 6;
 
-function Tv() {
+function Home() {
   const history = useHistory();
   const bigTvMatch = useRouteMatch<{ tvId: string }>("/tv/:tvId");
   const { scrollY } = useViewportScroll();
-  const { data: todayTvData, isLoading: todayTvLoading } = useQuery<IGetTv>(
-    ["tv", "allTrending"],
+  const { data: TvData, isLoading: TrendingTvLoading } = useQuery<IGetTv>(
+    ["Tv", "AllTrending"],
     getTv
   );
-  const { data: popularTvData, isLoading: popularTvLoading } = useQuery<IGetTv>(
-    ["tv", "PopularTv"],
+  const { data: popularTv, isLoading: TvLoading } = useQuery<IGetTv>(
+    ["Tv", "PopularTv"],
     getPopularTv
   );
   const { data: topRateTvData, isLoading: topRateTvLoading } = useQuery<IGetTv>(
-    ["tv", "TopTv"],
+    ["Tv", "TopTv"],
     getTopRatedTv
   );
 
-  const [todayTvindex, setTodayTvIndex] = useState(0);
-  const [popTvindex, setPopTvIndex] = useState(0);
-  const [topTvindex, setTopTvIndex] = useState(0);
+  const [index, setIndex] = useState(0);
+  const [TvIndex, setTvIndex] = useState(0);
+  const [topTvIndex, settopTvIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
+
   const [back, setBack] = useState(false);
 
-  const incraseTodayLeftIndex = () => {
+  const toggleLeaving = () => setLeaving((prev) => !prev);
+
+  const incraseAllTrendingLeftIndex = () => {
     setBack(false);
-    if (todayTvData) {
+    if (TvData) {
       if (leaving) return;
       toggleLeaving();
-      const totalTv = todayTvData.results.length - 1;
+      const totalTv = TvData.results.length - 1;
       const maxIndex = Math.floor(totalTv / offset) - 1;
-      setTodayTvIndex((prev) => (prev === 0 ? maxIndex : prev - 1));
+      setIndex((prev) => (prev === 0 ? maxIndex : prev - 1));
     }
-    console.log(back);
   };
 
-  const incraseTodayRightIndex = () => {
+  const incraseAllTrendingRightIndex = () => {
     setBack(true);
-    if (todayTvData) {
+    if (TvData) {
       if (leaving) return;
       toggleLeaving();
-      const totalTv = todayTvData.results.length - 1;
+      const totalTv = TvData.results.length - 1;
       const maxIndex = Math.floor(totalTv / offset) - 1;
-      setTodayTvIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
+      setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
     }
-    console.log(back);
   };
 
-  // PopTv Btn
-  const incrasePopLeftIndex = () => {
+  // Tv Btn
+  const incraseTvLeftIndex = () => {
     setBack(false);
-    if (popularTvData) {
+    if (popularTv) {
       if (leaving) return;
       toggleLeaving();
-      const totalTv = popularTvData.results.length - 1;
+      const totalTv = popularTv.results.length - 1;
       const maxIndex = Math.floor(totalTv / offset) - 1;
-      setPopTvIndex((prev) => (prev === 0 ? maxIndex : prev - 1));
+      setTvIndex((prev) => (prev === 0 ? maxIndex : prev - 1));
     }
   };
 
-  const incrasePopRightIndex = () => {
+  const incraseTvRightIndex = () => {
     setBack(true);
-    if (popularTvData) {
+    if (popularTv) {
       if (leaving) return;
       toggleLeaving();
-      const totalTv = popularTvData.results.length - 1;
+      const totalTv = popularTv.results.length - 1;
       const maxIndex = Math.floor(totalTv / offset) - 1;
-      setPopTvIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
+      setTvIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
     }
   };
 
+  // // TopRate Tv
   const incraseTopLeftIndex = () => {
     setBack(false);
     if (topRateTvData) {
@@ -335,7 +337,7 @@ function Tv() {
       toggleLeaving();
       const totalTv = topRateTvData.results.length - 1;
       const maxIndex = Math.floor(totalTv / offset) - 1;
-      setTopTvIndex((prev) => (prev === 0 ? maxIndex : prev - 1));
+      settopTvIndex((prev) => (prev === 0 ? maxIndex : prev - 1));
     }
   };
 
@@ -346,21 +348,16 @@ function Tv() {
       toggleLeaving();
       const totalTv = topRateTvData.results.length - 1;
       const maxIndex = Math.floor(totalTv / offset) - 1;
-      setTopTvIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
+      settopTvIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
     }
   };
 
-  const toggleLeaving = () => setLeaving((prev) => !prev);
-
-  const onBoxClicked = (tvId: number) => {
-    history.push(`/tv/${tvId}`);
+  const onBoxClicked = (TvId: number) => {
+    history.push(`/Tv/${TvId}`);
   };
-  const onOverlayClick = () => history.push("/tv");
-  const clickedTv =
-    bigTvMatch?.params.tvId &&
-    todayTvData?.results.find((tv) => tv.id === +bigTvMatch.params.tvId);
+  const onOverlayClick = () => history.push("/");
 
-  const isLoading = todayTvLoading || popularTvLoading || topRateTvLoading;
+  const isLoading = TrendingTvLoading || TvLoading || topRateTvLoading;
 
   return (
     <Wrapper>
@@ -369,20 +366,20 @@ function Tv() {
       ) : (
         <>
           <Banner
-            bgPhoto={makeImagePath(todayTvData?.results[0].backdrop_path || "")}
+            bgphoto={makeImagePath(TvData?.results[0].backdrop_path || "")}
           >
-            <Title>{todayTvData?.results[0].name}</Title>
-            <Overview>{todayTvData?.results[0].overview}</Overview>
+            <Title>{TvData?.results[0].name}</Title>
+            <Overview>{TvData?.results[0].overview}</Overview>
           </Banner>
           <SliderContainer>
-            <TodayTvTitle>Today TV</TodayTvTitle>
-            <SliderInlineBox>
-              <Slider>
-                <AnimatePresence
-                  custom={back}
-                  initial={false}
-                  onExitComplete={toggleLeaving}
-                >
+            <AllTrendingTv>Tv</AllTrendingTv>
+            <Slider>
+              <AnimatePresence
+                custom={back}
+                initial={false}
+                onExitComplete={toggleLeaving}
+              >
+                <div key={index}>
                   <Row
                     custom={back}
                     variants={rowVariants}
@@ -390,58 +387,66 @@ function Tv() {
                     animate="visible"
                     exit="exit"
                     transition={{ type: "tween", duration: 1 }}
-                    key={todayTvindex}
                   >
-                    {todayTvData?.results
-                      .slice(1)
-                      .slice(
-                        offset * todayTvindex,
-                        offset * todayTvindex + offset
-                      )
-                      .map((tv) => (
-                        <>
-                          <Box
-                            layoutId={tv.id + ""}
-                            key={tv.id}
-                            whileHover="hover"
-                            initial="normal"
-                            variants={boxVariants}
-                            onClick={() => onBoxClicked(tv.id)}
-                            transition={{ type: "tween" }}
-                            bgPhoto={
-                              tv.backdrop_path
-                                ? makeImagePath(tv.backdrop_path, "w500")
-                                : tv.poster_path
-                                ? makeImagePath(tv.poster_path, "w500")
-                                : noPoster
-                            }
-                          >
-                            <Info variants={infoVariants}>
-                              <h4>{tv.name}</h4>
-                            </Info>
-                          </Box>
-                        </>
-                      ))}
-                  </Row>
-                  <SliderLeftBtn onClick={incraseTodayLeftIndex}>
-                    &lt;
-                  </SliderLeftBtn>
-                  <SliderRightBtn onClick={incraseTodayRightIndex}>
-                    &gt;
-                  </SliderRightBtn>
-                </AnimatePresence>
-              </Slider>
-            </SliderInlineBox>
+                    {TvData?.results.map((tv) => (
+                      <Box
+                        bgphoto={makeImagePath(tv.backdrop_path, "w500")}
+                      ></Box>
+                    )) ===
+                    popularTv?.results.map((tv) => (
+                      <Box
+                        // layoutId={Tv.id + ""}
+                        bgphoto={makeImagePath(tv.backdrop_path, "w500")}
+                      ></Box>
+                    ))
+                      ? console.log("s")
+                      : console.log("good")}
 
-            {/* PopTv */}
-            <PopTvTitle>Popular TV</PopTvTitle>
-            <SliderInlineBox>
-              <PopSlider>
-                <AnimatePresence
-                  custom={back}
-                  initial={false}
-                  onExitComplete={toggleLeaving}
-                >
+                    {TvData?.results
+                      .slice(1)
+                      .slice(offset * index, offset * index + offset)
+
+                      .map((tv) => (
+                        <Box
+                          layoutId={tv.id + ""}
+                          key={tv.id}
+                          whileHover="hover"
+                          initial="nomal"
+                          variants={boxVariants}
+                          onClick={() => onBoxClicked(tv.id)}
+                          transition={{ type: "tween" }}
+                          bgphoto={
+                            tv.backdrop_path
+                              ? makeImagePath(tv.backdrop_path, "w500")
+                              : noPoster
+                          }
+                        >
+                          {console.log(makeImagePath(tv.name))}
+                          <Info variants={infoVariants}>
+                            <h4>{tv.name}</h4>
+                          </Info>
+                        </Box>
+                      ))}
+                  </Row>
+                  <SliderLeftBtn onClick={incraseAllTrendingLeftIndex}>
+                    &lt;
+                  </SliderLeftBtn>
+                  <SliderRightBtn onClick={incraseAllTrendingRightIndex}>
+                    &gt;
+                  </SliderRightBtn>
+                </div>
+              </AnimatePresence>
+            </Slider>
+
+            {/* Tv */}
+            <TvTitle>Pop Tv</TvTitle>
+            <Slider>
+              <AnimatePresence
+                custom={back}
+                initial={false}
+                onExitComplete={toggleLeaving}
+              >
+                <div key={TvIndex}>
                   <Row
                     custom={back}
                     variants={rowVariants}
@@ -449,53 +454,47 @@ function Tv() {
                     animate="visible"
                     exit="exit"
                     transition={{ type: "tween", duration: 1 }}
-                    key={popTvindex}
                   >
-                    {popularTvData?.results
+                    {popularTv?.results
                       .slice(1)
-                      .slice(offset * popTvindex, offset * popTvindex + offset)
+                      .slice(offset * TvIndex, offset * TvIndex + offset)
                       .map((tv) => (
-                        <>
-                          <Box
-                            layoutId={tv.id + ""}
-                            key={tv.id}
-                            whileHover="hover"
-                            initial="normal"
-                            variants={boxVariants}
-                            onClick={() => onBoxClicked(tv.id)}
-                            transition={{ type: "tween" }}
-                            bgPhoto={
-                              tv.backdrop_path
-                                ? makeImagePath(tv.backdrop_path, "w500")
-                                : noPoster
-                            }
-                          >
-                            <Info variants={infoVariants}>
-                              <h4>{tv.name}</h4>
-                            </Info>
-                          </Box>
-                        </>
+                        <Box
+                          layoutId={tv.id + ""}
+                          key={tv.id}
+                          whileHover="hover"
+                          initial="normal"
+                          variants={boxVariants}
+                          onClick={() => onBoxClicked(tv.id)}
+                          transition={{ type: "tween" }}
+                          bgphoto={makeImagePath(tv.backdrop_path, "w500")}
+                        >
+                          <Info variants={infoVariants}>
+                            <h4>{tv.name}</h4>
+                          </Info>
+                        </Box>
                       ))}
                   </Row>
-                  <SliderLeftBtn onClick={incrasePopLeftIndex}>
+                  <SliderLeftBtn onClick={incraseTvLeftIndex}>
                     &lt;
                   </SliderLeftBtn>
-                  <SliderRightBtn onClick={incrasePopRightIndex}>
+                  <SliderRightBtn onClick={incraseTvRightIndex}>
                     &gt;
                   </SliderRightBtn>
-                </AnimatePresence>
-              </PopSlider>
-            </SliderInlineBox>
+                </div>
+              </AnimatePresence>
+            </Slider>
 
             {/* TopTv */}
-            <PopTvTitle>TopRate TV</PopTvTitle>
-            <SliderInlineBox>
-              <TopSlider>
-                <AnimatePresence
-                  custom={back}
-                  initial={false}
-                  onExitComplete={toggleLeaving}
-                >
+
+            <TvTitle>Top Tv</TvTitle>
+            <Slider>
+              <AnimatePresence
+                custom={back}
+                initial={false}
+                onExitComplete={toggleLeaving}
+              >
+                <div key={topTvIndex}>
                   <Row
                     custom={back}
                     variants={rowVariants}
@@ -503,32 +502,28 @@ function Tv() {
                     animate="visible"
                     exit="exit"
                     transition={{ type: "tween", duration: 1 }}
-                    key={topTvindex}
                   >
                     {topRateTvData?.results
                       .slice(1)
-                      .slice(offset * topTvindex, offset * topTvindex + offset)
+                      .slice(offset * topTvIndex, offset * topTvIndex + offset)
                       .map((tv) => (
-                        <>
-                          <Box
-                            layoutId={tv.id + ""}
-                            key={tv.id}
-                            whileHover="hover"
-                            initial="normal"
-                            variants={boxVariants}
-                            onClick={() => onBoxClicked(tv.id)}
-                            transition={{ type: "tween" }}
-                            bgPhoto={
-                              tv.backdrop_path
-                                ? makeImagePath(tv.backdrop_path, "w500")
-                                : noPoster
-                            }
-                          >
-                            <Info variants={infoVariants}>
-                              <h4>{tv.name}</h4>
-                            </Info>
-                          </Box>
-                        </>
+                        <Box
+                          layoutId={tv.id + ""}
+                          key={tv.id}
+                          whileHover="hover"
+                          initial="normal"
+                          variants={boxVariants}
+                          onClick={() => onBoxClicked(tv.id)}
+                          transition={{ type: "tween" }}
+                          bgphoto={makeImagePath(
+                            tv.backdrop_path,
+                            "w500" || null
+                          )}
+                        >
+                          <Info variants={infoVariants}>
+                            <h4>{tv.name}</h4>
+                          </Info>
+                        </Box>
                       ))}
                   </Row>
                   <SliderLeftBtn onClick={incraseTopLeftIndex}>
@@ -537,9 +532,9 @@ function Tv() {
                   <SliderRightBtn onClick={incraseTopRightIndex}>
                     &gt;
                   </SliderRightBtn>
-                </AnimatePresence>
-              </TopSlider>
-            </SliderInlineBox>
+                </div>
+              </AnimatePresence>
+            </Slider>
           </SliderContainer>
 
           <AnimatePresence>
@@ -551,24 +546,13 @@ function Tv() {
                   animate={{ opacity: 1 }}
                 />
                 <BigTv
-                  style={{ top: scrollY.get() + 100 }}
+                  style={{
+                    top: scrollY.get() + 100,
+                    bottom: scrollY.get() + 100,
+                  }}
                   layoutId={bigTvMatch.params.tvId}
                 >
-                  {clickedTv && (
-                    <>
-                      <BigCover
-                        style={{
-                          backgroundImage: `linear-gradient(to top, black, transparent), url(${makeImagePath(
-                            clickedTv.backdrop_path,
-                            "w500"
-                          )})`,
-                        }}
-                      />
-                      <BigTitle>{clickedTv.name}</BigTitle>
-                      <BigOverview>{clickedTv.overview}</BigOverview>
-                      <BigOverview>{clickedTv.release_date}</BigOverview>
-                    </>
-                  )}
+                  <Detail />
                 </BigTv>
               </>
             ) : null}
@@ -578,4 +562,4 @@ function Tv() {
     </Wrapper>
   );
 }
-export default Tv;
+export default Home;

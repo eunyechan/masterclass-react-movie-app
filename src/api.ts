@@ -40,6 +40,7 @@ interface ITv {
 export interface IGetMovieDetail {
   adult: boolean;
   backdrop_path: string;
+  results: IMovie[];
   genres: IGenres[];
   homepage: string;
   id: number;
@@ -50,6 +51,19 @@ export interface IGetMovieDetail {
   poster_path?: string;
   name: string;
   runtime: number;
+  number_of_seasons: number;
+}
+
+export interface IGetTvDetail {
+  adult: boolean;
+  backdrop_path: string;
+  genres: IGenres[];
+  homepage: string;
+  id: number;
+  vote_average: number;
+  overview: string;
+  poster_path?: string;
+  name: string;
   number_of_seasons: number;
 }
 
@@ -64,36 +78,31 @@ interface IGenres {
   name: string;
 }
 
-export function allTrending() {
+// export function allTrending() {
+//   return fetch(`${BASE_PATH}/movie/popular?api_key=${API_KEY}`).then(
+//     (response) => response.json()
+//   );
+// }
+
+export function getMovies() {
   return fetch(`${BASE_PATH}/movie/popular?api_key=${API_KEY}`).then(
     (response) => response.json()
   );
 }
 
-export function getMovies() {
-  return fetch(`${BASE_PATH}/movie/now_playing?api_key=${API_KEY}`).then(
-    (response) => response.json()
-  );
-}
-
-export function topMovies() {
-  return fetch(`${BASE_PATH}/movie/top_rated?api_key=${API_KEY}`).then(
-    (response) => response.json()
-  );
-}
 export function upcomingMovie() {
   return fetch(`${BASE_PATH}/movie/upcoming?api_key=${API_KEY}`).then(
+    (response) => response.json()
+  );
+}
+export function topMovies() {
+  return fetch(`${BASE_PATH}/movie/top_rated?api_key=${API_KEY}`).then(
     (response) => response.json()
   );
 }
 export function getMovieDetail(movieId: string) {
   return fetch(`${BASE_PATH}/movie/${movieId}?api_key=${API_KEY}`).then(
     (response) => response.json()
-  );
-}
-export function getTvDetail(tvId: string) {
-  return fetch(`${BASE_PATH}/tv/${tvId}?api_key=${API_KEY}`).then((response) =>
-    response.json()
   );
 }
 export function similarMovie(movieId: string) {
@@ -104,6 +113,11 @@ export function similarMovie(movieId: string) {
 export function similarTv(tvId: string) {
   return fetch(`${BASE_PATH}/tv/${tvId}/similar?api_key=${API_KEY}`).then(
     (response) => response.json()
+  );
+}
+export function getTvDetail(tvId: string) {
+  return fetch(`${BASE_PATH}/tv/${tvId}?api_key=${API_KEY}`).then((response) =>
+    response.json()
   );
 }
 

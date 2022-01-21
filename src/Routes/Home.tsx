@@ -1,16 +1,20 @@
 import { useQuery } from "react-query";
 import styled from "styled-components";
 import { motion, AnimatePresence, useViewportScroll } from "framer-motion";
+import { useParams } from "react-router-dom";
 import {
-  allTrending,
+  // allTrending,
   getMovies,
   IGetMoviesResult,
   topMovies,
   upcomingMovie,
+  IGetMovieDetail,
+  getMovieDetail,
 } from "../api";
 import { makeImagePath } from "../utils";
 import { useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
+import Detail from "../Components/Detail";
 import noPoster from "../assets/noPoster.jpg";
 
 const Wrapper = styled.div`
@@ -19,6 +23,16 @@ const Wrapper = styled.div`
   overflow-x: hidden;
 `;
 
+const BigRunTime = styled.span`
+  margin: 20px;
+  padding: 5px 5px;
+  position: relative;
+  border-radius: 5px;
+  font-weight: bold;
+  top: -80px;
+  color: ${(props) => props.theme.white.lighter};
+  background-color: #fbc531;
+`;
 const Loader = styled.div`
   height: 20vh;
   display: flex;
@@ -48,39 +62,13 @@ const Overview = styled.p`
 `;
 
 const SliderContainer = styled.div`
-  display: flex;
-  flex-direction: column;
   margin-top: 8em;
   font-weight: bolder;
 `;
 
 const Slider = styled.div`
   position: relative;
-  margin-bottom: 13rem;
-  &:hover {
-    button {
-      opacity: 1;
-      transition: 0.5s ease;
-      background-color: rgba(0, 0, 0, 0.6);
-      border: none;
-    }
-  }
-`;
-
-const MoviesSlider = styled.div`
-  position: relative;
-  &:hover {
-    button {
-      opacity: 1;
-      transition: 0.5s ease;
-      background-color: rgba(0, 0, 0, 0.6);
-      border: none;
-    }
-  }
-`;
-
-const TopSlider = styled.div`
-  position: relative;
+  padding-bottom: 13rem;
   &:hover {
     button {
       opacity: 1;
@@ -255,14 +243,25 @@ const infoVariants = {
   },
 };
 
+interface RouteParams {
+  movieId: string;
+  tvId: string;
+}
+
 const offset = 6;
 
 function Home() {
   const history = useHistory();
   const bigMovieMatch = useRouteMatch<{ movieId: string }>("/movies/:movieId");
+  const { movieId, tvId } = useParams() as RouteParams;
+  const { data, isLoading: Loading } = useQuery<IGetMovieDetail>(
+    ["movie"],
+    () => getMovieDetail(movieId)
+    // { keepPreviousData: true }
+  );
   const { scrollY } = useViewportScroll();
-  const { data: allTrendingMoviedata, isLoading: TrendingMovieLoading } =
-    useQuery<IGetMoviesResult>(["movies", "AllTrending"], allTrending);
+  const { data: allTrendingMovieData, isLoading: TrendingMovieLoading } =
+    useQuery<IGetMoviesResult>(["movies", "AllTrending"], getMovies);
   const { data: upcomingMovieData, isLoading: moviesLoading } =
     useQuery<IGetMoviesResult>(["movies", "UpComingmovies"], upcomingMovie);
   const { data: topRateMovieData, isLoading: topRateMoviesLoading } =
@@ -279,10 +278,10 @@ function Home() {
 
   const incraseAllTrendingLeftIndex = () => {
     setBack(false);
-    if (allTrendingMoviedata) {
+    if (allTrendingMovieData) {
       if (leaving) return;
       toggleLeaving();
-      const totalMovies = allTrendingMoviedata.results.length - 1;
+      const totalMovies = allTrendingMovieData.results.length - 1;
       const maxIndex = Math.floor(totalMovies / offset) - 1;
       setIndex((prev) => (prev === 0 ? maxIndex : prev - 1));
     }
@@ -290,10 +289,10 @@ function Home() {
 
   const incraseAllTrendingRightIndex = () => {
     setBack(true);
-    if (allTrendingMoviedata) {
+    if (allTrendingMovieData) {
       if (leaving) return;
       toggleLeaving();
-      const totalMovies = allTrendingMoviedata.results.length - 1;
+      const totalMovies = allTrendingMovieData.results.length - 1;
       const maxIndex = Math.floor(totalMovies / offset) - 1;
       setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
     }
@@ -351,13 +350,26 @@ function Home() {
   const onOverlayClick = () => history.push("/");
 
   const clickedMovie =
-    bigMovieMatch?.params.movieId &&
-    allTrendingMoviedata?.results.find(
-      (movie) => movie.id === +bigMovieMatch.params.movieId
-    );
+    (bigMovieMatch?.params.movieId &&
+      allTrendingMovieData?.results.find(
+        (movie) => movie.id === +bigMovieMatch.params.movieId
+      )) ||
+    (bigMovieMatch?.params.movieId &&
+      upcomingMovieData?.results.find(
+        (movie) => movie.id === +bigMovieMatch.params.movieId
+      )) ||
+    (bigMovieMatch?.params.movieId &&
+      topRateMovieData?.results.find(
+        (movie) => movie.id === +bigMovieMatch.params.movieId
+      ));
 
   const isLoading =
     TrendingMovieLoading || moviesLoading || topRateMoviesLoading;
+
+  const time = data?.runtime;
+  const hour = time && Math.floor(time / 60);
+  const minutes = time && time % 60;
+  console.log(data);
 
   return (
     <Wrapper>
@@ -367,11 +379,11 @@ function Home() {
         <>
           <Banner
             bgphoto={makeImagePath(
-              allTrendingMoviedata?.results[0].backdrop_path || ""
+              allTrendingMovieData?.results[0].backdrop_path || ""
             )}
           >
-            <Title>{allTrendingMoviedata?.results[0].title}</Title>
-            <Overview>{allTrendingMoviedata?.results[0].overview}</Overview>
+            <Title>{allTrendingMovieData?.results[0].title}</Title>
+            <Overview>{allTrendingMovieData?.results[0].overview}</Overview>
           </Banner>
           <SliderContainer>
             <AllTrendingMovie>AllTrending Movie</AllTrendingMovie>
@@ -390,7 +402,7 @@ function Home() {
                     exit="exit"
                     transition={{ type: "tween", duration: 1 }}
                   >
-                    {allTrendingMoviedata?.results
+                    {allTrendingMovieData?.results
                       .slice(1)
                       .slice(offset * index, offset * index + offset)
 
@@ -399,7 +411,7 @@ function Home() {
                           layoutId={movie.id + ""}
                           key={movie.id}
                           whileHover="hover"
-                          initial="normal"
+                          initial="nomal"
                           variants={boxVariants}
                           onClick={() => onBoxClicked(movie.id)}
                           transition={{ type: "tween" }}
@@ -472,7 +484,6 @@ function Home() {
             </Slider>
 
             {/* TopMovies */}
-
             <MoviesTitle>Top Movies</MoviesTitle>
             <Slider>
               <AnimatePresence
@@ -526,7 +537,7 @@ function Home() {
             </Slider>
           </SliderContainer>
 
-          {/* <AnimatePresence>
+          <AnimatePresence>
             {bigMovieMatch ? (
               <>
                 <Overlay
@@ -535,7 +546,10 @@ function Home() {
                   animate={{ opacity: 1 }}
                 />
                 <BigMovie
-                  style={{ top: scrollY.get() + 100 }}
+                  style={{
+                    top: scrollY.get() + 100,
+                    bottom: scrollY.get() + 100,
+                  }}
                   layoutId={bigMovieMatch.params.movieId}
                 >
                   {clickedMovie && (
@@ -548,15 +562,20 @@ function Home() {
                           )})`,
                         }}
                       />
-                      <BigTitle>{clickedMovie.title}</BigTitle>
-                      <BigOverview>{clickedMovie.overview}</BigOverview>
-                      <BigOverview>{clickedMovie.release_date}</BigOverview>
+                      {/* <Detail /> */}
+                      <BigRunTime>
+                        {bigMovieMatch
+                          ? `${hour}시간 ${minutes}분`
+                          : `시즌: ${data?.number_of_seasons}`}
+                      </BigRunTime>
+                      {/* <BigTitle>{clickedMovie.title}</BigTitle>
+                      <BigOverview>{clickedMovie.overview}</BigOverview> */}
                     </>
                   )}
                 </BigMovie>
               </>
             ) : null}
-          </AnimatePresence> */}
+          </AnimatePresence>
         </>
       )}
     </Wrapper>
