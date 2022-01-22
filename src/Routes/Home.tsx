@@ -1,7 +1,6 @@
 import { useQuery } from "react-query";
 import styled from "styled-components";
 import { motion, AnimatePresence, useViewportScroll } from "framer-motion";
-import { useParams } from "react-router-dom";
 import {
   // allTrending,
   getMovies,
@@ -13,7 +12,7 @@ import {
 } from "../api";
 import { makeImagePath } from "../utils";
 import { useState } from "react";
-import { useHistory, useRouteMatch } from "react-router-dom";
+import { useNavigate, useMatch, useParams } from "react-router-dom";
 import Detail from "../Components/Detail";
 import noPoster from "../assets/noPoster.jpg";
 
@@ -243,22 +242,11 @@ const infoVariants = {
   },
 };
 
-interface RouteParams {
-  movieId: string;
-  tvId: string;
-}
-
 const offset = 6;
 
 function Home() {
-  const history = useHistory();
-  const bigMovieMatch = useRouteMatch<{ movieId: string }>("/movies/:movieId");
-  const { movieId, tvId } = useParams() as RouteParams;
-  const { data, isLoading: Loading } = useQuery<IGetMovieDetail>(
-    ["movie"],
-    () => getMovieDetail(movieId)
-    // { keepPreviousData: true }
-  );
+  const navigate = useNavigate();
+  const bigMovieMatch = useMatch("/movies/:movieId");
   const { scrollY } = useViewportScroll();
   const { data: allTrendingMovieData, isLoading: TrendingMovieLoading } =
     useQuery<IGetMoviesResult>(["movies", "AllTrending"], getMovies);
@@ -345,31 +333,12 @@ function Home() {
   };
 
   const onBoxClicked = (movieId: number) => {
-    history.push(`/movies/${movieId}`);
+    navigate(`/movies/${movieId}`);
   };
-  const onOverlayClick = () => history.push("/");
-
-  const clickedMovie =
-    (bigMovieMatch?.params.movieId &&
-      allTrendingMovieData?.results.find(
-        (movie) => movie.id === +bigMovieMatch.params.movieId
-      )) ||
-    (bigMovieMatch?.params.movieId &&
-      upcomingMovieData?.results.find(
-        (movie) => movie.id === +bigMovieMatch.params.movieId
-      )) ||
-    (bigMovieMatch?.params.movieId &&
-      topRateMovieData?.results.find(
-        (movie) => movie.id === +bigMovieMatch.params.movieId
-      ));
+  const onOverlayClick = () => navigate(-1);
 
   const isLoading =
     TrendingMovieLoading || moviesLoading || topRateMoviesLoading;
-
-  const time = data?.runtime;
-  const hour = time && Math.floor(time / 60);
-  const minutes = time && time % 60;
-  console.log(data);
 
   return (
     <Wrapper>
@@ -552,26 +521,7 @@ function Home() {
                   }}
                   layoutId={bigMovieMatch.params.movieId}
                 >
-                  {clickedMovie && (
-                    <>
-                      <BigCover
-                        style={{
-                          backgroundImage: `linear-gradient(to top, black, transparent), url(${makeImagePath(
-                            clickedMovie.backdrop_path,
-                            "w500"
-                          )})`,
-                        }}
-                      />
-                      {/* <Detail /> */}
-                      <BigRunTime>
-                        {bigMovieMatch
-                          ? `${hour}시간 ${minutes}분`
-                          : `시즌: ${data?.number_of_seasons}`}
-                      </BigRunTime>
-                      {/* <BigTitle>{clickedMovie.title}</BigTitle>
-                      <BigOverview>{clickedMovie.overview}</BigOverview> */}
-                    </>
-                  )}
+                  <Detail />
                 </BigMovie>
               </>
             ) : null}

@@ -1,17 +1,51 @@
 const API_KEY = "d6f3886503ed1a63a64352baf5a2d3d3";
 const BASE_PATH = "https://api.themoviedb.org/3";
-
 interface IMovie {
   id: number;
   backdrop_path: string;
+  overview: string;
   poster_path: string;
   title: string;
+  release_date?: string;
+  vote_average?: number;
+  name?: string;
+  media_type: string;
+}
+interface ITv {
+  id: number;
+  backdrop_path: string;
   overview: string;
-  release_date: number;
+  poster_path: string;
+  name: string;
+  release_date?: string;
+}
+interface IGenres {
+  id: number;
+  name: string;
+}
+interface ICompanies {
+  id: number;
+  name: string;
+  logo_path: string;
+}
+export interface IGetMovieDetail {
+  adult: boolean;
+  backdrop_path: string;
+  genres: IGenres[];
+  homepage: string;
+  id: number;
+  production_companies: ICompanies[];
+  title: string;
+  vote_average: number;
+  overview: string;
+  poster_path?: string;
+  name: string;
+  runtime: number;
+  number_of_seasons: number;
 }
 
 export interface IGetMoviesResult {
-  dates: {
+  dates?: {
     maximum: string;
     minimum: string;
   };
@@ -28,81 +62,56 @@ export interface IGetTv {
   total_results: number;
 }
 
-interface ITv {
-  id: number;
-  backdrop_path: string;
-  overview: string;
-  poster_path: string;
-  name: string;
-  release_date?: string;
-}
-
-export interface IGetMovieDetail {
-  adult: boolean;
-  backdrop_path: string;
+export interface ISearchResult {
+  page: number;
   results: IMovie[];
-  genres: IGenres[];
-  homepage: string;
+}
+interface ITrend {
+  name: string;
+  backdrop_path: string;
+  media_type: string;
   id: number;
-  production_companies: ICompanies[];
+  overview: string;
   title: string;
   vote_average: number;
-  overview: string;
-  poster_path?: string;
-  name: string;
-  runtime: number;
-  number_of_seasons: number;
+  poster_path: string;
 }
-
-export interface IGetTvDetail {
-  adult: boolean;
-  backdrop_path: string;
-  genres: IGenres[];
-  homepage: string;
-  id: number;
-  vote_average: number;
-  overview: string;
-  poster_path?: string;
-  name: string;
-  number_of_seasons: number;
+export interface ITrendResult {
+  page: number;
+  results: ITrend[];
+  total_pages: number;
+  total_results: number;
 }
-
-interface ICompanies {
-  id: number;
-  name: string;
-  logo_path: string;
+export function allTrending() {
+  return fetch(`${BASE_PATH}/trending/all/week?api_key=${API_KEY}`).then(
+    (response) => response.json()
+  );
 }
-
-interface IGenres {
-  id: number;
-  name: string;
-}
-
-// export function allTrending() {
-//   return fetch(`${BASE_PATH}/movie/popular?api_key=${API_KEY}`).then(
-//     (response) => response.json()
-//   );
-// }
 
 export function getMovies() {
-  return fetch(`${BASE_PATH}/movie/popular?api_key=${API_KEY}`).then(
+  return fetch(`${BASE_PATH}/movie/popular?api_key=${API_KEY}&page=3`).then(
     (response) => response.json()
   );
 }
 
-export function upcomingMovie() {
-  return fetch(`${BASE_PATH}/movie/upcoming?api_key=${API_KEY}`).then(
+export function topMovies() {
+  return fetch(`${BASE_PATH}/movie/top_rated?api_key=${API_KEY}`).then(
     (response) => response.json()
   );
 }
-export function topMovies() {
-  return fetch(`${BASE_PATH}/movie/top_rated?api_key=${API_KEY}`).then(
+export function upcomingMovie() {
+  return fetch(`${BASE_PATH}/movie/upcoming?api_key=${API_KEY}&page=5`).then(
     (response) => response.json()
   );
 }
 export function getMovieDetail(movieId: string) {
   return fetch(`${BASE_PATH}/movie/${movieId}?api_key=${API_KEY}`).then(
     (response) => response.json()
+  );
+}
+export function getTvDetail(tvId: string) {
+  return fetch(`${BASE_PATH}/tv/${tvId}?api_key=${API_KEY}`).then((response) =>
+    response.json()
   );
 }
 export function similarMovie(movieId: string) {
@@ -113,11 +122,6 @@ export function similarMovie(movieId: string) {
 export function similarTv(tvId: string) {
   return fetch(`${BASE_PATH}/tv/${tvId}/similar?api_key=${API_KEY}`).then(
     (response) => response.json()
-  );
-}
-export function getTvDetail(tvId: string) {
-  return fetch(`${BASE_PATH}/tv/${tvId}?api_key=${API_KEY}`).then((response) =>
-    response.json()
   );
 }
 
@@ -132,7 +136,7 @@ export function getPopularTv() {
   );
 }
 export function getTopRatedTv() {
-  return fetch(`${BASE_PATH}/tv/top_rated?api_key=${API_KEY}&`).then(
+  return fetch(`${BASE_PATH}/tv/top_rated?api_key=${API_KEY}&page=1`).then(
     (response) => response.json()
   );
 }

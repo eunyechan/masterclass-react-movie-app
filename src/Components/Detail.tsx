@@ -1,57 +1,25 @@
+import React from "react";
 import { useQuery } from "react-query";
-import { useParams } from "react-router-dom";
-import { useState } from "react";
 import styled from "styled-components";
-import { motion, AnimatePresence, useViewportScroll } from "framer-motion";
 import { getMovieDetail, getTvDetail, IGetMovieDetail } from "../api";
-import { useRouteMatch, useHistory } from "react-router-dom";
 import { makeImagePath } from "../utils";
-import { Helmet } from "react-helmet";
 import noPoster from "../assets/noPoster.jpg";
+import { useParams } from "react-router-dom";
+import { Helmet } from "react-helmet";
 
 const Container = styled.div`
   border-radius: 20px;
   height: 100%;
 `;
-
-const Overview = styled.p`
-  font-size: 30px;
-  width: 50%;
-`;
-
-const Overlay = styled(motion.div)`
-  position: fixed;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  opacity: 0;
-`;
-
-const BigMovie = styled(motion.div)`
-  position: absolute;
-  width: 40vw;
-  height: 80vh;
-  left: 0;
-  right: 0;
-  margin: 0 auto;
-  border-radius: 15px;
-  overflow-y: scroll;
-  background-color: ${(props) => props.theme.black.lighter};
-`;
-
-const Loader = styled.div`
-  height: 20vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const BigCover = styled.div`
+const BigImage = styled.div`
   width: 100%;
   height: 500px;
   background-position: center top;
   background-size: cover;
+`;
+const Loader = styled.div`
+  height: 100%;
+  width: 100%;
 `;
 const BigHeader = styled.div`
   padding: 20px;
@@ -62,7 +30,6 @@ const BigHeader = styled.div`
   top: -60px;
 `;
 const BigTitle = styled.h3`
-  border: 15px solid white;
   font-size: 30px;
   color: ${(props) => props.theme.white.lighter};
 `;
@@ -152,27 +119,14 @@ interface RouteParams {
   movieId: string;
   tvId: string;
 }
-
 const Detail = () => {
-  const history = useHistory();
   const { movieId, tvId } = useParams() as RouteParams;
-  const { scrollY } = useViewportScroll();
-  const onOverlayClick = () => history.push("/");
 
-  // console.log(movieId);
-
-  const { data, isLoading } = useQuery<IGetMovieDetail>(
+  const { data, isLoading: movieLoading } = useQuery<IGetMovieDetail>(
     ["movieDetail"],
-    () => getMovieDetail(movieId),
+    () => (movieId ? getMovieDetail(movieId) : getTvDetail(tvId)),
     { keepPreviousData: true }
   );
-
-  const [index, setIndex] = useState(0);
-  // const { data: tvData, isLoading: tvLoading } = useQuery<IGetTvDetail>(
-  //   ["getTvDetail"],
-  //   () => (movieId ? getMovieDetail(movieId) : getTvDetail(tvId)),
-  //   { keepPreviousData: true }
-  // );
 
   const time = data?.runtime;
   const hour = time && Math.floor(time / 60);
@@ -180,32 +134,40 @@ const Detail = () => {
 
   return (
     <>
-      {isLoading ? (
+      {movieLoading ? (
         <Loader>Loading...</Loader>
       ) : (
         <Container>
-          {/* <BigRunTime>
-            {movieId
-              ? `${hour}시간 ${minutes}분`
-              : `시즌: ${data?.number_of_seasons}`}
-          </BigRunTime> */}
-          {/* <BigCover
-              style={{
-                backgroundImage: data?.backdrop_path
-                  ? `linear-gradient(to top,black, transparent), url(${makeImagePath(
-                      data.backdrop_path
-                    )})`
-                  : noPoster,
-              }}
-            ></BigCover>
-            <BigCover>{data?.title}</BigCover> */}
-          {/* <title>asd{console.log(data?.name)}</title> */}
-          {/* <BigHeader>
+          <Helmet>
+            <title>
+              {movieId ? (
+                data?.title
+              ) : movieLoading ? (
+                <Loader>Loading...</Loader>
+              ) : (
+                data?.name
+              )}
+            </title>
+          </Helmet>
+          <BigImage
+            style={{
+              backgroundImage: data?.backdrop_path
+                ? `linear-gradient(to top,black, transparent), url(${makeImagePath(
+                    data.backdrop_path
+                  )})`
+                : data?.poster_path
+                ? `linear-gradient(to top,black, transparent), url(${makeImagePath(
+                    data.poster_path
+                  )})`
+                : noPoster,
+            }}
+          />
+          <BigHeader>
             <BigTitle>{movieId ? data?.title : data?.name}</BigTitle>
             <BigRate>{`⭐️ ${data && data?.vote_average}`}</BigRate>
           </BigHeader>
-          <BigOverView>sdf{console.log(data?.name)}</BigOverView> */}
-          {/* <BigRunTime>
+          <BigOverView>{data && data?.overview}</BigOverView>
+          <BigRunTime>
             {movieId
               ? `${hour}시간 ${minutes}분`
               : `시즌: ${data?.number_of_seasons}`}
@@ -216,13 +178,12 @@ const Detail = () => {
                 <Genre key={genre.id}>{genre.name}</Genre>
               ))}
           </BigGenres>
-          <CompanyTitle>제작사</CompanyTitle> */}
-          {/* <BigCompany>
+          <CompanyTitle>제작사</CompanyTitle>
+          <BigCompany>
             {data &&
               data?.production_companies?.map((company, index) => (
-                <CompanyInfo>
+                <CompanyInfo key={index}>
                   <CompanyLogo
-                    key={index}
                     bgPhoto={
                       company.logo_path
                         ? makeImagePath(company.logo_path, "w500")
@@ -232,10 +193,11 @@ const Detail = () => {
                   <CompanyName>{company.name}</CompanyName>
                 </CompanyInfo>
               ))}
-          </BigCompany> */}
+          </BigCompany>
         </Container>
       )}
     </>
   );
 };
+
 export default Detail;

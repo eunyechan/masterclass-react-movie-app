@@ -10,7 +10,7 @@ import {
 } from "../api";
 import { makeImagePath } from "../utils";
 import { useState } from "react";
-import { useHistory, useRouteMatch } from "react-router-dom";
+import { useNavigate, useMatch } from "react-router-dom";
 import Detail from "../Components/Detail";
 import noPoster from "../assets/noPoster.jpg";
 
@@ -259,8 +259,8 @@ const infoVariants = {
 const offset = 6;
 
 function Home() {
-  const history = useHistory();
-  const bigTvMatch = useRouteMatch<{ tvId: string }>("/tv/:tvId");
+  const navigate = useNavigate();
+  const bigTvMatch = useMatch("/tv/:");
   const { scrollY } = useViewportScroll();
   const { data: TvData, isLoading: TrendingTvLoading } = useQuery<IGetTv>(
     ["Tv", "AllTrending"],
@@ -352,10 +352,10 @@ function Home() {
     }
   };
 
-  const onBoxClicked = (TvId: number) => {
-    history.push(`/Tv/${TvId}`);
+  const onBoxClicked = (tvId: number) => {
+    navigate(`/tv/${tvId}`);
   };
-  const onOverlayClick = () => history.push("/");
+  const onOverlayClick = () => navigate(-1);
 
   const isLoading = TrendingTvLoading || TvLoading || topRateTvLoading;
 
@@ -388,20 +388,6 @@ function Home() {
                     exit="exit"
                     transition={{ type: "tween", duration: 1 }}
                   >
-                    {TvData?.results.map((tv) => (
-                      <Box
-                        bgphoto={makeImagePath(tv.backdrop_path, "w500")}
-                      ></Box>
-                    )) ===
-                    popularTv?.results.map((tv) => (
-                      <Box
-                        // layoutId={Tv.id + ""}
-                        bgphoto={makeImagePath(tv.backdrop_path, "w500")}
-                      ></Box>
-                    ))
-                      ? console.log("s")
-                      : console.log("good")}
-
                     {TvData?.results
                       .slice(1)
                       .slice(offset * index, offset * index + offset)
@@ -418,7 +404,7 @@ function Home() {
                           bgphoto={
                             tv.backdrop_path
                               ? makeImagePath(tv.backdrop_path, "w500")
-                              : noPoster
+                              : makeImagePath(tv.poster_path, "w500")
                           }
                         >
                           {console.log(makeImagePath(tv.name))}
@@ -467,7 +453,11 @@ function Home() {
                           variants={boxVariants}
                           onClick={() => onBoxClicked(tv.id)}
                           transition={{ type: "tween" }}
-                          bgphoto={makeImagePath(tv.backdrop_path, "w500")}
+                          bgphoto={
+                            tv.backdrop_path
+                              ? makeImagePath(tv.backdrop_path, "w500")
+                              : makeImagePath(tv.poster_path, "w500")
+                          }
                         >
                           <Info variants={infoVariants}>
                             <h4>{tv.name}</h4>
@@ -515,10 +505,11 @@ function Home() {
                           variants={boxVariants}
                           onClick={() => onBoxClicked(tv.id)}
                           transition={{ type: "tween" }}
-                          bgphoto={makeImagePath(
-                            tv.backdrop_path,
-                            "w500" || null
-                          )}
+                          bgphoto={
+                            tv.backdrop_path
+                              ? makeImagePath(tv.backdrop_path, "w500")
+                              : makeImagePath(tv.poster_path, "w500")
+                          }
                         >
                           <Info variants={infoVariants}>
                             <h4>{tv.name}</h4>
