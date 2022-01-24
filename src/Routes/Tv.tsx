@@ -1,18 +1,11 @@
 import { useQuery } from "react-query";
 import styled from "styled-components";
 import { motion, AnimatePresence, useViewportScroll } from "framer-motion";
-import {
-  // allTrending,
-  getTv,
-  IGetTv,
-  getTopRatedTv,
-  getPopularTv,
-} from "../api";
+import { getTv, IGetTv, getTopRatedTv, getPopularTv } from "../api";
 import { makeImagePath } from "../utils";
 import { useState } from "react";
 import { useNavigate, useMatch } from "react-router-dom";
 import Detail from "../Components/Detail";
-import noPoster from "../assets/noPoster.jpg";
 
 const Wrapper = styled.div`
   background: black;
@@ -58,30 +51,6 @@ const SliderContainer = styled.div`
 const Slider = styled.div`
   position: relative;
   margin-bottom: 13rem;
-  &:hover {
-    button {
-      opacity: 1;
-      transition: 0.5s ease;
-      background-color: rgba(0, 0, 0, 0.6);
-      border: none;
-    }
-  }
-`;
-
-const TvSlider = styled.div`
-  position: relative;
-  &:hover {
-    button {
-      opacity: 1;
-      transition: 0.5s ease;
-      background-color: rgba(0, 0, 0, 0.6);
-      border: none;
-    }
-  }
-`;
-
-const TopSlider = styled.div`
-  position: relative;
   &:hover {
     button {
       opacity: 1;
@@ -149,23 +118,6 @@ const BigTv = styled(motion.div)`
   background-color: ${(props) => props.theme.black.lighter};
 `;
 
-const BigCover = styled.div`
-  width: 100%;
-  background-size: cover;
-  background-position: center center;
-  height: 400px;
-  overflow: visible;
-  display: flex;
-`;
-
-const BigTitle = styled.h3`
-  color: ${(props) => props.theme.white.lighter};
-  padding: 20px;
-  font-size: 46px;
-  position: relative;
-  top: -80px;
-`;
-
 const AllTrendingTv = styled.h3`
   color: ${(props) => props.theme.white.lighter};
   font-size: 18px;
@@ -185,13 +137,6 @@ const TvTitle = styled.h3`
   color: ${(props) => props.theme.white.lighter};
   margin-top: 100px;
   margin-bottom: 20px;
-`;
-
-const BigOverview = styled.p`
-  padding: 20px;
-  position: relative;
-  top: -80px;
-  color: ${(props) => props.theme.white.lighter};
 `;
 
 const SliderLeftBtn = styled(motion.button)`
@@ -260,7 +205,7 @@ const offset = 6;
 
 function Home() {
   const navigate = useNavigate();
-  const bigTvMatch = useMatch("/tv/:");
+  const bigTvMatch = useMatch("/tv/:tvId");
   const { scrollY } = useViewportScroll();
   const { data: TvData, isLoading: TrendingTvLoading } = useQuery<IGetTv>(
     ["Tv", "AllTrending"],
@@ -407,7 +352,6 @@ function Home() {
                               : makeImagePath(tv.poster_path, "w500")
                           }
                         >
-                          {console.log(makeImagePath(tv.name))}
                           <Info variants={infoVariants}>
                             <h4>{tv.name}</h4>
                           </Info>

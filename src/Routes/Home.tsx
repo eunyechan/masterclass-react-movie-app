@@ -1,20 +1,11 @@
 import { useQuery } from "react-query";
 import styled from "styled-components";
 import { motion, AnimatePresence, useViewportScroll } from "framer-motion";
-import {
-  // allTrending,
-  getMovies,
-  IGetMoviesResult,
-  topMovies,
-  upcomingMovie,
-  IGetMovieDetail,
-  getMovieDetail,
-} from "../api";
+import { getMovies, IGetMoviesResult, topMovies, upcomingMovie } from "../api";
 import { makeImagePath } from "../utils";
 import { useState } from "react";
-import { useNavigate, useMatch, useParams } from "react-router-dom";
+import { useNavigate, useMatch } from "react-router-dom";
 import Detail from "../Components/Detail";
-import noPoster from "../assets/noPoster.jpg";
 
 const Wrapper = styled.div`
   background: black;
@@ -22,16 +13,6 @@ const Wrapper = styled.div`
   overflow-x: hidden;
 `;
 
-const BigRunTime = styled.span`
-  margin: 20px;
-  padding: 5px 5px;
-  position: relative;
-  border-radius: 5px;
-  font-weight: bold;
-  top: -80px;
-  color: ${(props) => props.theme.white.lighter};
-  background-color: #fbc531;
-`;
 const Loader = styled.div`
   height: 20vh;
   display: flex;
@@ -135,23 +116,6 @@ const BigMovie = styled(motion.div)`
   background-color: ${(props) => props.theme.black.lighter};
 `;
 
-const BigCover = styled.div`
-  width: 100%;
-  background-size: cover;
-  background-position: center center;
-  height: 400px;
-  overflow: visible;
-  display: flex;
-`;
-
-const BigTitle = styled.h3`
-  color: ${(props) => props.theme.white.lighter};
-  padding: 20px;
-  font-size: 46px;
-  position: relative;
-  top: -80px;
-`;
-
 const AllTrendingMovie = styled.h3`
   color: ${(props) => props.theme.white.lighter};
   font-size: 18px;
@@ -171,13 +135,6 @@ const MoviesTitle = styled.h3`
   color: ${(props) => props.theme.white.lighter};
   margin-top: 100px;
   margin-bottom: 20px;
-`;
-
-const BigOverview = styled.p`
-  padding: 20px;
-  position: relative;
-  top: -80px;
-  color: ${(props) => props.theme.white.lighter};
 `;
 
 const SliderLeftBtn = styled(motion.button)`
