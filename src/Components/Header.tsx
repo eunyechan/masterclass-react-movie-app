@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { motion, useAnimation, useViewportScroll } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { render } from "@testing-library/react";
 
 const Nav = styled(motion.nav)`
   display: flex;
@@ -140,12 +141,11 @@ function Header() {
   const { register, handleSubmit } = useForm<IForm>();
   const onValid = (data: IForm) => {
     navigate(`/search?keyword=${data.keyword}`);
-    (window.location || document.location).reload();
-
-    // window.location.replace(
-    //   `/${process.env.PUBLIC_URL}/search?keyword=${data.keyword}`
-    // );
+    window.location.replace(
+      `${process.env.PUBLIC_URL}/search?keyword=${data.keyword}`
+    );
   };
+
   return (
     <Nav variants={navVariants} animate={navAnimation} initial={"top"}>
       <Col>
