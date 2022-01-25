@@ -140,7 +140,7 @@ function Header() {
   const { register, handleSubmit } = useForm<IForm>();
   const onValid = (data: IForm) => {
     navigate(`/search?keyword=${data.keyword}`);
-    // window.location.replace(`/search?keyword=${data.keyword}`);
+    window.location.replace(`/search?keyword=${data.keyword}`);
   };
   return (
     <Nav variants={navVariants} animate={navAnimation} initial={"top"}>
