@@ -140,7 +140,11 @@ function Header() {
   const { register, handleSubmit } = useForm<IForm>();
   const onValid = (data: IForm) => {
     navigate(`/search?keyword=${data.keyword}`);
-    window.location.replace(`/search?keyword=${data.keyword}`);
+    (window.location || document.location).reload();
+
+    // window.location.replace(
+    //   `/${process.env.PUBLIC_URL}/search?keyword=${data.keyword}`
+    // );
   };
   return (
     <Nav variants={navVariants} animate={navAnimation} initial={"top"}>
