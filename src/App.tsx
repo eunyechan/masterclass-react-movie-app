@@ -7,10 +7,10 @@ import Detail from "./Components/Detail";
 
 function App() {
   return (
-    <BrowserRouter basename={process.env.PUBLIC_URL}>
+    <BrowserRouter basename="masterclass-react-movie-app/">
       <Header />
       <Routes>
-        <Route path={"/*"} element={<Home />}>
+        <Route path="/" element={<Home />}>
           <Route path="movies/:movieId" element={<Detail />} />
         </Route>
 
