@@ -1,11 +1,11 @@
 {
   "files": {
-    "main.js": "/masterclass-react-notflix/static/js/main.0d6737a2.js",
+    "main.js": "/masterclass-react-notflix/static/js/main.f668e0cd.js",
     "static/media/noPoster.jpg": "/masterclass-react-notflix/static/media/noPoster.13760da4367b19e03f01.jpg",
     "index.html": "/masterclass-react-notflix/index.html",
-    "main.0d6737a2.js.map": "/masterclass-react-notflix/static/js/main.0d6737a2.js.map"
+    "main.f668e0cd.js.map": "/masterclass-react-notflix/static/js/main.f668e0cd.js.map"
   },
   "entrypoints": [
-    "static/js/main.0d6737a2.js"
+    "static/js/main.f668e0cd.js"
   ]
 }
