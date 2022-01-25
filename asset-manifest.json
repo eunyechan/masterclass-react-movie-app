@@ -1,0 +1,11 @@
+{
+  "files": {
+    "main.js": "/masterclass-react-movie-app/static/js/main.6a7cbb3d.js",
+    "static/media/noPoster.jpg": "/masterclass-react-movie-app/static/media/noPoster.13760da4367b19e03f01.jpg",
+    "index.html": "/masterclass-react-movie-app/index.html",
+    "main.6a7cbb3d.js.map": "/masterclass-react-movie-app/static/js/main.6a7cbb3d.js.map"
+  },
+  "entrypoints": [
+    "static/js/main.6a7cbb3d.js"
+  ]
+}
