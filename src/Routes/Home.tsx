@@ -358,7 +358,6 @@ function Home() {
                 </div>
               </AnimatePresence>
             </Slider>
-            {console.log(process.env.PUBLIC_URL)}
 
             {/* Movies */}
             <MoviesTitle>Movies</MoviesTitle>
