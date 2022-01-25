@@ -1,46 +1,47 @@
-# Getting Started with Create React App
+# TypeScript framer-motion
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+framer-motion 을 사용하여 웹을 만들었다
 
-## Available Scripts
+- animation slider hover 등등 많은 것을 생각보다 쉽게 할 수 있지만 아직 낯설고 어려움이 있었다
+- motion 사용방법 <motion.태그>
+- 아래는 사용하는 방식이다
 
-In the project directory, you can run:
+```sh
+ex)
+<motion.div> or <motion.span> ...
+```
 
-### `npm start`
+## 이것을 사용하여 netflix웹을 clone 을 만들었다
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### 만들면서 느낀점
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+- motion 이 조금이나마 익숙해짐
+- Route git deploy 문제가 생기는것을 해결
+- Router 업데이트 사용 switch history 등등 이 조금 변함
+- 하나하나 해결해 가는 것이 재밌음
 
-### `npm test`
+## Installation
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```sh
+    "framer-motion": "^5.5.6",
+    "gh-pages": "^2.0.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-helmet": "^6.1.0",
+    "react-helmet-async": "^1.2.2",
+    "react-hook-form": "^7.23.0",
+    "react-icons": "^4.3.1",
+    "react-query": "^3.34.7",
+    "react-router-dom": "^6.0.2",
+    "react-scripts": "5.0.0",
+    "recoil": "^0.5.2",
+    "styled-components": "^5.3.3",
+    "typescript": "^4.5.4",
+    "web-vitals": "^2.1.3"
+```
 
-### `npm run build`
+#### skill
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+<img src="https://img.shields.io/badge/Typescript-#3178C6?style=flat-square&logo=Typescript&logoColor=white"/></a>&nbsp
+<img src="https://img.shields.io/badge/css3-#1572B6?style=flat-square&logo=css3&logoColor=white"/></a>&nbsp
+<img src="https://img.shields.io/badge/react-#6CADDF?style=flat-square&logo=react&logoColor=white"/></a>&nbsp
