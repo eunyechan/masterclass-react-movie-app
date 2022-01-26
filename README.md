@@ -9,7 +9,7 @@ framer-motion 을 사용하여 웹을 만들었다
 ex)
 <motion.div> or <motion.span> ...
 ```
-## 이것을 사용하여 netflix웹을 clone 을 만들었다
+## motion을 사용하여 movie api를 가져와서 netflix웹을 clone 을 만들었다
 ### 만들면서 느낀점
 - motion 이 조금이나마 익숙해짐
 - Route git deploy 문제가 생기는것을 해결
