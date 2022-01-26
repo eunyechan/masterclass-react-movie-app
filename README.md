@@ -1,4 +1,4 @@
-# TypeScript framer-motion
+# TypeScript react framer-motion
 
 framer-motion 을 사용하여 웹을 만들었다
 
