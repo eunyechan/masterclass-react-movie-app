@@ -40,8 +40,6 @@ ex)
     "web-vitals": "^2.1.3"
 ```
 
-#### skill
+![eunyechan's GitHub stats](https://github-readme-stats.vercel.app/api?username=eunyechan&show_icons=true&theme=solarized-dark)
 
-<img src="https://img.shields.io/badge/Typescript-#3178C6?style=flat-square&logo=Typescript&logoColor=white"/></a>&nbsp
-<img src="https://img.shields.io/badge/css3-#1572B6?style=flat-square&logo=css3&logoColor=white"/></a>&nbsp
-<img src="https://img.shields.io/badge/react-#6CADDF?style=flat-square&logo=react&logoColor=white"/></a>&nbsp
+[![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=eunyechan&layout=compact&theme=material-palenight&langs_count=6)](https://github.com/anuraghazra/github-readme-stats)
