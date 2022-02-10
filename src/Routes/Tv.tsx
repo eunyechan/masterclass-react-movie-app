@@ -165,13 +165,13 @@ const SliderRightBtn = styled(motion.button)`
 
 const rowVariants = {
   hidden: (back: boolean) => ({
-    x: back ? -window.outerWidth + 5 : window.outerWidth - 5,
+    x: back ? window.outerWidth - 5 : -window.outerWidth + 5,
   }),
   visible: {
     x: 0,
   },
   exit: (back: boolean) => ({
-    x: back ? window.outerWidth - 5 : -window.outerWidth + 5,
+    x: back ? -window.outerWidth + 5 : window.outerWidth - 5,
   }),
 };
 

@@ -99,12 +99,12 @@ export function allTrending() {
   );
 }
 export function getMovies() {
-  return fetch(`${BASE_PATH}/movie/popular?api_key=${API_KEY}&page=3`).then(
+  return fetch(`${BASE_PATH}/movie/popular?api_key=${API_KEY}&page=4`).then(
     (response) => response.json()
   );
 }
 export function topMovies() {
-  return fetch(`${BASE_PATH}/movie/top_rated?api_key=${API_KEY}`).then(
+  return fetch(`${BASE_PATH}/movie/top_rated?api_key=${API_KEY}&page=4`).then(
     (response) => response.json()
   );
 }
@@ -140,7 +140,7 @@ export function getTv() {
   );
 }
 export function getPopularTv() {
-  return fetch(`${BASE_PATH}/tv/popular?api_key=${API_KEY}&page=4`).then(
+  return fetch(`${BASE_PATH}/tv/popular?api_key=${API_KEY}&page=5`).then(
     (response) => response.json()
   );
 }
